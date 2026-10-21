@@ -1,0 +1,6 @@
+{
+  "name": "Online Book Store Management System & QA Audit Suite",
+  "description": "Complete Jakarta Servlet, JSP, JDBC, and MySQL Online Book Store with live application, 20-point QA functional audit report, automated test suite, and viva guide.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

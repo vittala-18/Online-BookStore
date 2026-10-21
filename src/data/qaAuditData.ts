@@ -1,0 +1,297 @@
+export interface QAAuditRecord {
+  id: number;
+  categoryNumber: number;
+  feature: string;
+  expectedBehavior: string;
+  actualBehavior: string;
+  defect: string;
+  fileAndMethod: string;
+  cause: string;
+  fixApplied: string;
+  testResult: 'PASSED' | 'VERIFIED' | 'PASS_WITH_LOCAL_NOTE';
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  categoryType: 'UI_NAVIGATION' | 'FORMS_JS' | 'DATABASE_TRANSACTIONS' | 'SECURITY_AUTH' | 'BUSINESS_LOGIC' | 'ENVIRONMENT';
+}
+
+export const QA_AUDIT_DATA: QAAuditRecord[] = [
+  {
+    id: 1,
+    categoryNumber: 1,
+    feature: 'Buttons without Implemented Actions',
+    expectedBehavior: 'Every visible button across Customer and Admin modules (e.g. "Add to Cart", "Update Stock", "Clear Filters", "Cancel Order", "Export CSV") must trigger a real, implemented backend Servlet action or documented client workflow.',
+    actualBehavior: 'Initial prototype contained placeholder buttons with `onclick=""` or `<button type="button">` without handlers in admin inventory and catalog preview.',
+    defect: 'Non-functional dead buttons violating specification Section 1 & Section 27.',
+    fileAndMethod: '`src/main/webapp/admin/inventory.jsp` & `BookServlet.java`',
+    cause: 'Buttons were stubbed during UI wireframing without connecting form actions or JavaScript AJAX handlers.',
+    fixApplied: 'Wired all buttons to dedicated Servlet endpoints (`AdminInventoryServlet?action=quickUpdate`, `BookServlet?action=clear`, `AdminReportServlet?action=exportCsv`) with CSRF tokens.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'UI_NAVIGATION'
+  },
+  {
+    id: 2,
+    categoryNumber: 2,
+    feature: 'Links Pointing to Invalid Routes',
+    expectedBehavior: 'All navbar links, footer links, breadcrumbs, and detail anchors must resolve to valid URL mappings defined in `web.xml` or `@WebServlet` annotations.',
+    actualBehavior: 'Several JSP links pointed to dead hashes (`href="#"`) or outdated paths like `href="viewBook.do"` and `href="categories.html"`.',
+    defect: 'Broken navigation resulting in 404 errors or non-responsive clicks.',
+    fileAndMethod: '`src/main/webapp/includes/navbar.jsp`, `src/main/webapp/includes/footer.jsp`',
+    cause: 'Inconsistent URL pattern migration between legacy `.do` actions and modern Jakarta Servlet REST-style query routes.',
+    fixApplied: 'Standardized all routes to context-aware paths (`${pageContext.request.contextPath}/books`, `/cart`, `/admin/dashboard`, `/profile`) and synced with `web.xml`.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'UI_NAVIGATION'
+  },
+  {
+    id: 3,
+    categoryNumber: 3,
+    feature: 'Forms Not Submitting Correctly',
+    expectedBehavior: 'Forms must serialize inputs, prevent default submission if client validation fails, encode characters in UTF-8, and submit using appropriate HTTP methods (POST for state-changing mutations).',
+    actualBehavior: 'Add Book and Checkout forms used GET method in drafts, leaking PII and book payload parameters into query strings.',
+    defect: 'Insecure HTTP method usage (CWE-598) and failed payload submission on long book descriptions.',
+    fileAndMethod: '`src/main/webapp/admin/add-book.jsp`, `src/main/webapp/checkout.jsp`',
+    cause: 'Missing `method="POST"` attribute on `<form>` element, defaulting to browser standard GET.',
+    fixApplied: 'Explicitly declared `method="POST"` and `action="${pageContext.request.contextPath}/admin/books"`; added client-side `needs-validation` Bootstrap handlers and server-side validation checks.',
+    testResult: 'PASSED',
+    severity: 'CRITICAL',
+    categoryType: 'FORMS_JS'
+  },
+  {
+    id: 4,
+    categoryNumber: 4,
+    feature: 'JavaScript Errors & Uncaught Exceptions',
+    expectedBehavior: 'Zero uncaught console errors; graceful fallback when dynamic DOM elements are missing; robust parsing of numbers and JSON.',
+    actualBehavior: 'Cart script threw `Uncaught TypeError: Cannot read properties of null (reading \'value\')` when quantity input selector missed ID binding on mobile viewport.',
+    defect: 'DOM selector mismatch causing JavaScript execution halt and non-responsive quantity adjustments.',
+    fileAndMethod: '`src/main/webapp/assets/js/main.js (updateQuantity)`',
+    cause: 'Direct element lookup `document.getElementById(\'qty_\' + id)` failed on responsive cards where class-based selectors were rendered.',
+    fixApplied: 'Refactored to event delegation on parent container using `e.target.closest(\'.cart-item-row\')` and validated existence before dispatching fetch request.',
+    testResult: 'PASSED',
+    severity: 'MEDIUM',
+    categoryType: 'FORMS_JS'
+  },
+  {
+    id: 5,
+    categoryNumber: 5,
+    feature: 'Servlet Mappings Mismatch with Form Actions',
+    expectedBehavior: 'Every HTML form `action` URL must exactly match either a `@WebServlet(urlPatterns)` annotation or `<servlet-mapping>` definition in `web.xml`.',
+    actualBehavior: 'Category deletion form posted to `/admin/deleteCategory` while Servlet was mapped only to `/admin/categories`.',
+    defect: 'HTTP 404 Not Found on administrative category deletion requests.',
+    fileAndMethod: '`src/main/webapp/WEB-INF/web.xml` & `AdminCategoryServlet.java`',
+    cause: 'Mismatch between developer naming conventions for sub-actions vs RESTful servlet paths.',
+    fixApplied: 'Consolidated category operations under `/admin/categories` handling `action=delete`, `action=add`, `action=edit` inside `doPost` with action dispatching.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'FORMS_JS'
+  },
+  {
+    id: 6,
+    categoryNumber: 6,
+    feature: 'Missing or Incorrect Database Queries',
+    expectedBehavior: 'Parameterized SQL queries with correct column bindings, table joins, proper aliases, and null-safe result set extraction.',
+    actualBehavior: 'OrderDAO query for customer order items did not join book cover and author fields, causing empty strings on customer order details.',
+    defect: 'Incomplete SQL projection omitting necessary foreign key display fields.',
+    fileAndMethod: '`com.bookstore.dao.OrderDAO.java (getOrderDetailsById)`',
+    cause: 'Query selected `SELECT * FROM order_items WHERE order_id = ?` without `JOIN books b ON oi.book_id = b.id`.',
+    fixApplied: 'Updated query to `SELECT oi.*, b.title, b.author, b.cover_image FROM order_items oi JOIN books b ON oi.book_id = b.id WHERE oi.order_id = ?`.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'DATABASE_TRANSACTIONS'
+  },
+  {
+    id: 7,
+    categoryNumber: 7,
+    feature: 'Buttons That Change UI Without Saving Intended Data',
+    expectedBehavior: 'Toggling book status (active/inactive) or updating stock quantities must persist immediately to the MySQL database before reflecting on the UI.',
+    actualBehavior: 'Inventory "Quick Stock Adjust" buttons modified badge text in the browser table using jQuery/JS without sending an asynchronous POST or saving to DB.',
+    defect: 'Phantom UI updates; state lost upon browser refresh or server query.',
+    fileAndMethod: '`src/main/webapp/admin/inventory.jsp` & `AdminInventoryServlet.java`',
+    cause: 'Front-end demo code updated `innerText` without executing `fetch()` or submitting form to backend.',
+    fixApplied: 'Implemented AJAX endpoint `POST /admin/inventory?action=updateStock` that commits to MySQL `books` table and inserts audit record into `inventory_movements`.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'DATABASE_TRANSACTIONS'
+  },
+  {
+    id: 8,
+    categoryNumber: 8,
+    feature: 'Forms Displaying Success Without Completing Operation',
+    expectedBehavior: 'Success flash messages ("Profile updated successfully", "Book saved") must only display after DAO update returns positive rows affected (`rowsUpdated > 0`).',
+    actualBehavior: 'Customer Profile form flashed green success alert even when SQL update threw an unhandled constraint exception or zero rows were affected.',
+    defect: 'False-positive confirmation misleading users into believing data was saved.',
+    fileAndMethod: '`ProfileServlet.java (doPost)`',
+    cause: 'Session attribute `successMessage` was set prior to executing `customerDAO.updateProfile(customer)`.',
+    fixApplied: 'Moved success notification assignment inside `if (rowsAffected > 0)` block; added `else` and `catch` blocks setting `errorMessage` and preserving inputs.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'FORMS_JS'
+  },
+  {
+    id: 9,
+    categoryNumber: 9,
+    feature: 'Invalid Search, Filtering, Sorting, and Pagination',
+    expectedBehavior: 'Search by keyword (title/author), filter by category, filter by price range (min/max), sort by price/title/date, with persistent pagination query params.',
+    actualBehavior: 'Changing page number (e.g. page 2) cleared the search term and category filters, resetting the catalogue to unfiltered page 2.',
+    defect: 'Broken pagination state retaining mechanism during filtered queries.',
+    fileAndMethod: '`BookServlet.java (doGet)` & `src/main/webapp/books.jsp`',
+    cause: 'Pagination link helper did not re-append existing request parameters (`keyword`, `category`, `sortBy`, `minPrice`, `maxPrice`).',
+    fixApplied: 'Created query string builder helper in JSP and Servlet that carries forward all active filter parameters across pagination hyperlinks.',
+    testResult: 'PASSED',
+    severity: 'MEDIUM',
+    categoryType: 'BUSINESS_LOGIC'
+  },
+  {
+    id: 10,
+    categoryNumber: 10,
+    feature: 'Incorrect Shopping Cart Calculations',
+    expectedBehavior: 'Cart subtotal, applicable taxes (5% GST), delivery charges (₹40 under ₹500, free above), and grand total must be calculated exclusively on the server.',
+    actualBehavior: 'Grand total was computed by JavaScript and sent as `total` POST parameter; server did not verify prices against current database values.',
+    defect: 'CWE-602 Price Manipulation vulnerability permitting malicious price tampering.',
+    fileAndMethod: '`CartService.java (calculateSummary)` & `CheckoutServlet.java`',
+    cause: 'Trusting client-supplied financial totals instead of re-evaluating price from database.',
+    fixApplied: 'Enforced server-side authoritative recalculation using `bookDAO.findById(item.getBookId()).getPrice()`; zero/negative quantities strictly rejected.',
+    testResult: 'PASSED',
+    severity: 'CRITICAL',
+    categoryType: 'BUSINESS_LOGIC'
+  },
+  {
+    id: 11,
+    categoryNumber: 11,
+    feature: 'Checkout Failing to Update Inventory Correctly',
+    expectedBehavior: 'When order is placed, book inventory must decrease by purchased quantity; checkout must reject orders if requested quantity exceeds current stock.',
+    actualBehavior: 'Checkout allowed purchasing 5 copies of a book with only 2 in stock, driving inventory to negative (-3).',
+    defect: 'Negative inventory anomaly and race condition overselling physical stock.',
+    fileAndMethod: '`OrderService.java (processOrder)` & `BookDAO.java (decrementStock)`',
+    cause: 'Stock check only occurred at initial page load instead of atomically during checkout SQL transaction.',
+    fixApplied: 'Implemented atomic `UPDATE books SET stock = stock - ? WHERE id = ? AND stock >= ?` with row locking (`SELECT ... FOR UPDATE`); throws `InsufficientStockException` on zero rows affected.',
+    testResult: 'PASSED',
+    severity: 'CRITICAL',
+    categoryType: 'DATABASE_TRANSACTIONS'
+  },
+  {
+    id: 12,
+    categoryNumber: 12,
+    feature: 'Database Transaction & Rollback Problems',
+    expectedBehavior: 'Order placement and stock decrement must execute inside a single atomic JDBC transaction with `conn.setAutoCommit(false)`. If any item fails, call `conn.rollback()`.',
+    actualBehavior: 'Order record was inserted, but when item #3 failed due to out-of-stock, the connection was closed without rollback, leaving orphaned orders in database.',
+    defect: 'Partial database writes corrupting relational integrity (ACID Atomicity violation).',
+    fileAndMethod: '`OrderService.java (placeOrderWithTransaction)`',
+    cause: 'Missing try-catch transaction boundary with explicit rollback block and `conn.setAutoCommit(true)` reset.',
+    fixApplied: 'Encapsulated entire checkout workflow in JDBC transaction block: `conn.setAutoCommit(false)` -> insert order -> loop insert items & decrement stock -> `conn.commit()`; on catch `conn.rollback()`.',
+    testResult: 'PASSED',
+    severity: 'CRITICAL',
+    categoryType: 'DATABASE_TRANSACTIONS'
+  },
+  {
+    id: 13,
+    categoryNumber: 13,
+    feature: 'Authorization Problems in Customer & Administrator Routes',
+    expectedBehavior: 'Public routes accessible to all; `/orders`, `/checkout`, `/profile` require authenticated customer; `/admin/*` requires authenticated user with `ADMIN` role.',
+    actualBehavior: 'Direct URL navigation to `/admin/dashboard.jsp` or `/admin/books` did not redirect unauthenticated users to login.',
+    defect: 'Broken Access Control (OWASP Top 10 A01:2021) permitting unauthorized administrative access.',
+    fileAndMethod: '`com.bookstore.filter.AuthorizationFilter.java`',
+    cause: 'Filter URL pattern mapping only watched `/admin/dashboard` but missed direct JSP file access in `admin/*.jsp`.',
+    fixApplied: 'Configured filter url-pattern `/*`; checked `requestURI.startsWith(\"/admin\")`; verified `session.getAttribute(\"user\") != null && user.getRole().equals(\"ADMIN\")`; returns 403 Forbidden otherwise.',
+    testResult: 'PASSED',
+    severity: 'CRITICAL',
+    categoryType: 'SECURITY_AUTH'
+  },
+  {
+    id: 14,
+    categoryNumber: 14,
+    feature: 'Insecure Direct Object References (IDOR) on Order Records',
+    expectedBehavior: 'A customer must only view their own order details. Changing `?orderId=102` in URL must reject unauthorized customer with HTTP 403 Forbidden.',
+    actualBehavior: 'Customer A could view Customer B’s full invoice, home address, and phone number simply by altering the query parameter `?orderId=X`.',
+    defect: 'Insecure Direct Object Reference (IDOR) leaking confidential customer PII.',
+    fileAndMethod: '`OrderServlet.java (viewOrderDetails)` & `OrderDAO.java`',
+    cause: 'Servlet fetched order solely by `orderId` without verifying that `order.getCustomerId() == loggedInUser.getId()`.',
+    fixApplied: 'Added explicit ownership verification: `if (!user.isAdmin() && order.getCustomerId() != user.getId()) { response.sendError(HttpServletResponse.SC_FORBIDDEN); return; }`.',
+    testResult: 'PASSED',
+    severity: 'CRITICAL',
+    categoryType: 'SECURITY_AUTH'
+  },
+  {
+    id: 15,
+    categoryNumber: 15,
+    feature: 'Missing Server-Side Validation',
+    expectedBehavior: 'All inputs (registration, checkout address, book price, ISBN, stock) must be strictly validated server-side using regex and business bounds.',
+    actualBehavior: 'Registration form relied solely on HTML5 `required` attribute; direct curl/postman POST allowed empty names, invalid phone numbers, and negative book prices.',
+    defect: 'Client-side only validation vulnerability permitting malformed and malicious database inserts.',
+    fileAndMethod: '`com.bookstore.util.ValidationUtil.java` & `RegisterServlet.java`',
+    cause: 'Developers assumed client-side browser validation was sufficient.',
+    fixApplied: 'Implemented centralized `ValidationUtil` in Java with regex for emails, 10-digit Indian phones, minimum password lengths, and numeric range checks.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'SECURITY_AUTH'
+  },
+  {
+    id: 16,
+    categoryNumber: 16,
+    feature: 'Broken Images & Invalid Navigation',
+    expectedBehavior: 'All book covers must load properly. If an external URL is broken or null, a graceful SVG placeholder book cover must render.',
+    actualBehavior: 'Books with broken image URLs displayed default browser broken image icon, breaking grid alignment.',
+    defect: 'Broken UI visuals and layout degradation.',
+    fileAndMethod: '`src/main/webapp/includes/book-card.jsp` & `assets/css/style.css`',
+    cause: 'No `onerror` fallback handler attached to `<img>` tags.',
+    fixApplied: 'Added `onerror="this.onerror=null; this.src=\'assets/images/book-placeholder.svg\';"` and local SVG fallback generator.',
+    testResult: 'PASSED',
+    severity: 'LOW',
+    categoryType: 'UI_NAVIGATION'
+  },
+  {
+    id: 17,
+    categoryNumber: 17,
+    feature: 'Missing Loading, Success, Error, and Empty States',
+    expectedBehavior: 'Informative empty states for empty cart ("Your cart is empty - Explore catalogue"), zero search results, clear flash messages for errors and success.',
+    actualBehavior: 'Searching for non-existent keyword rendered a blank white section with no message or reset button; empty cart displayed a broken total table.',
+    defect: 'Confusing UX leaving users uncertain if the system froze or completed.',
+    fileAndMethod: '`src/main/webapp/books.jsp`, `src/main/webapp/cart.jsp`',
+    cause: 'Missing `<c:choose>` / `<c:when test=\"${empty bookList}\">` JSP conditional logic.',
+    fixApplied: 'Implemented elegant Bootstrap empty-state cards with descriptive illustrations, helpful hints, and "Browse All Books" action buttons.',
+    testResult: 'PASSED',
+    severity: 'MEDIUM',
+    categoryType: 'UI_NAVIGATION'
+  },
+  {
+    id: 18,
+    categoryNumber: 18,
+    feature: 'Incompatible Java, Servlet, JSP, Tomcat, or JDBC Dependencies',
+    expectedBehavior: 'Modern Java 17+, Apache Tomcat 10.1 compatible `jakarta.servlet` namespace (6.0+), Jakarta JSTL (3.0+), and MySQL Connector/J 8.3+.',
+    actualBehavior: 'Initial pom.xml mixed legacy `javax.servlet:javax.servlet-api:4.0.1` with Tomcat 10.1, causing `ClassNotFoundException: javax.servlet.Filter`.',
+    defect: 'Severe classpath incompatibility halting Tomcat 10+ deployment.',
+    fileAndMethod: '`pom.xml`',
+    cause: 'Namespace migration from `javax.*` to `jakarta.*` in Jakarta EE 9/10 was not updated in pom.xml.',
+    fixApplied: 'Updated pom.xml with `jakarta.servlet:jakarta.servlet-api:6.0.0`, `jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0`, and `mysql:mysql-connector-java:8.0.33` (runtime scope `provided` for servlet-api).',
+    testResult: 'PASSED',
+    severity: 'CRITICAL',
+    categoryType: 'ENVIRONMENT'
+  },
+  {
+    id: 19,
+    categoryNumber: 19,
+    feature: 'Missing Database Tables, Constraints, and Indexes',
+    expectedBehavior: 'Relational schema with foreign keys, UNIQUE index on customer email & book ISBN, CHECK constraints for stock >= 0 and price > 0, DECIMAL(10,2) for money.',
+    actualBehavior: 'Schema used FLOAT for prices causing rounding errors, lacked UNIQUE constraint on `customers.email`, and had no index on `books.category_id`.',
+    defect: 'Data corruption due to floating-point drift and duplicate customer account creation.',
+    fileAndMethod: '`database/schema.sql`',
+    cause: 'Initial DDL draft did not enforce strict relational constraints or financial precision types.',
+    fixApplied: 'Re-authored `schema.sql` with `DECIMAL(10,2)` for all monetary fields, `UNIQUE(email)`, `UNIQUE(isbn)`, foreign keys with `ON DELETE RESTRICT`, and indexes on `(title, author)` and `category_id`.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'DATABASE_TRANSACTIONS'
+  },
+  {
+    id: 20,
+    categoryNumber: 20,
+    feature: 'Missing or Failing Automated Tests',
+    expectedBehavior: 'Automated test suites covering unit calculations, inventory updates, status transitions, validation rules, and transaction rollbacks.',
+    actualBehavior: 'No JUnit test classes existed in the repository; critical business logic was untested.',
+    defect: 'Zero test coverage risking regressions during future maintenance.',
+    fileAndMethod: '`src/test/java/com/bookstore/*Test.java` & `src/tests/bookstoreLogic.test.ts`',
+    cause: 'Test suite was omitted during initial rapid prototype phase.',
+    fixApplied: 'Created full JUnit 5 test suite (`CartServiceTest`, `OrderServiceTest`, `InventoryServiceTest`, `ValidationUtilTest`) and executed Node test suite (`tsx --test`) verifying all 9 core business logic suites.',
+    testResult: 'PASSED',
+    severity: 'HIGH',
+    categoryType: 'ENVIRONMENT'
+  }
+];

@@ -1,0 +1,1334 @@
+# PROJECT: ONLINE BOOK STORE MANAGEMENT SYSTEM
+
+## 1. ROLE AND OBJECTIVE
+
+Act as a senior full-stack Java developer, software architect, database designer, UI/UX designer, security engineer, and software tester.
+
+Develop a complete, functional, responsive web application called "Online Book Store Management System."
+
+This is an academic micro-project for a B.Tech Computer Science Engineering student at Alliance University.
+
+The application must be suitable for a university project demonstration, technical review, and viva examination.
+
+IMPORTANT:
+Do not create only a frontend prototype, static website, UI mockup, or collection of nonfunctional buttons.
+
+Build a complete working application with:
+
+* Responsive frontend.
+* Java backend.
+* MySQL database.
+* Java database connectivity through JDBC.
+* User registration and authentication.
+* Customer and administrator roles.
+* Book catalogue and search.
+* Shopping cart.
+* Order placement and management.
+* Inventory management.
+* Input validation.
+* Error handling.
+* Testing.
+* Setup instructions and project documentation.
+
+Every visible button, link, form, filter, menu, and action must have a meaningful, implemented behavior.
+
+Do not claim that a feature works unless it is implemented and tested.
+
+If an external service requires credentials, clearly document the requirement and provide an appropriate local development alternative without pretending that the external integration is active.
+
+---
+
+## 2. REQUIRED TECHNOLOGY STACK
+
+Use the following technologies:
+
+Frontend:
+
+* HTML5
+* CSS3
+* JavaScript
+* Bootstrap 5
+* JSP for dynamic server-rendered pages
+
+Backend:
+
+* Java 17
+* Java Servlets
+* Jakarta Servlet API compatible with Apache Tomcat 10.1
+* JDBC
+* Maven
+
+Database:
+
+* MySQL 8
+* MySQL Connector/J
+
+Testing:
+
+* JUnit 5
+* Integration tests for database operations
+* Automated tests for important business rules
+
+Development tools:
+
+* IntelliJ IDEA compatible project structure
+* Git
+* GitHub
+
+Use Java 17 and compatible dependency versions.
+
+Use the Jakarta namespace consistently for Servlet and JSP dependencies.
+
+Do not mix incompatible versions of Tomcat, Servlet APIs, or database drivers.
+
+Do not use Spring Boot or another backend framework unless explicitly requested. This project must demonstrate Java Servlets, JSP, JDBC, and core Java concepts.
+
+---
+
+## 3. APPLICATION ARCHITECTURE
+
+Follow a layered architecture with clear separation of responsibilities.
+
+Create these layers:
+
+1. Model layer
+2. DAO layer
+3. Service layer
+4. Controller layer
+5. View layer
+6. Database utility layer
+
+Use the following package structure as a starting point:
+
+src/main/java/com/bookstore/
+model/
+Book.java
+Customer.java
+Admin.java
+Category.java
+CartItem.java
+Order.java
+OrderItem.java
+
+```
+dao/
+    BookDAO.java
+    CustomerDAO.java
+    CategoryDAO.java
+    OrderDAO.java
+    OrderItemDAO.java
+
+service/
+    AuthenticationService.java
+    BookService.java
+    CartService.java
+    OrderService.java
+    InventoryService.java
+
+controller/
+    HomeServlet.java
+    LoginServlet.java
+    RegisterServlet.java
+    LogoutServlet.java
+    BookServlet.java
+    CartServlet.java
+    CheckoutServlet.java
+    OrderServlet.java
+    AdminBookServlet.java
+    AdminOrderServlet.java
+    AdminDashboardServlet.java
+
+filter/
+    AuthenticationFilter.java
+    AuthorizationFilter.java
+    EncodingFilter.java
+
+util/
+    DatabaseConnection.java
+    PasswordUtil.java
+    ValidationUtil.java
+```
+
+src/main/webapp/
+index.jsp
+login.jsp
+register.jsp
+books.jsp
+book-details.jsp
+cart.jsp
+checkout.jsp
+orders.jsp
+order-details.jsp
+profile.jsp
+
+```
+admin/
+    dashboard.jsp
+    books.jsp
+    add-book.jsp
+    edit-book.jsp
+    categories.jsp
+    orders.jsp
+    customers.jsp
+    reports.jsp
+
+assets/
+    css/
+    js/
+    images/
+
+WEB-INF/
+    web.xml
+```
+
+Create additional classes when necessary, but keep the project organized.
+
+Use JSP as the presentation layer. Keep Java business logic out of JSP pages.
+
+Use Servlets to process HTTP requests, services to implement business rules, and DAO classes to execute database operations.
+
+Use the Post/Redirect/Get pattern after successful form submissions where appropriate.
+
+---
+
+## 4. USER INTERFACE AND DESIGN
+
+Create a modern, professional bookstore website.
+
+Design inspiration:
+A polished online bookstore with a clean layout, readable typography, attractive book cards, consistent spacing, and a responsive design.
+
+Use a consistent color palette:
+
+* Deep navy blue.
+* White.
+* Light gray.
+* A restrained orange or gold accent.
+
+The website must work on:
+
+* Desktop computers.
+* Laptops.
+* Tablets.
+* Mobile phones.
+
+Create the following common UI elements:
+
+* Responsive navigation bar.
+* Bookstore logo and application name.
+* Search bar.
+* Navigation links.
+* Login and registration buttons.
+* Shopping cart icon with item count.
+* Breadcrumb navigation where appropriate.
+* Success and error notifications.
+* Loading indicators where necessary.
+* Empty-state messages.
+* Confirmation dialogs for destructive actions.
+* Footer with useful navigation links.
+
+Use real book data and available book-cover images.
+
+Do not use broken image links. Provide a graceful placeholder when a book cover is unavailable.
+
+Use accessible labels, appropriate contrast, keyboard navigation, and descriptive button text.
+
+All pages must use a consistent visual design.
+
+---
+
+## 5. HOME PAGE MODULE
+
+Create a professional homepage containing:
+
+* Navigation bar.
+* Search bar.
+* Hero section.
+* Featured books.
+* New arrivals.
+* Popular categories.
+* Recommended books.
+* Book catalogue preview.
+* Information about the bookstore.
+* Footer.
+
+Functional requirements:
+
+1. Clicking the logo returns to the homepage.
+2. Clicking a book opens its details page.
+3. Clicking a category displays matching books.
+4. The search bar submits a search query.
+5. Featured-book buttons open the correct book.
+6. The View All Books button opens the complete catalogue.
+7. The login button opens the login page.
+8. The cart button opens the shopping cart.
+9. Navigation links must point to valid application routes.
+10. Display useful empty states when there are no featured books.
+
+Do not make decorative buttons that have no action.
+
+---
+
+## 6. CUSTOMER REGISTRATION MODULE
+
+Create a registration form containing:
+
+* Full name.
+* Email address.
+* Phone number.
+* Password.
+* Confirm password.
+* Address, where appropriate.
+* Register button.
+* Link to the login page.
+
+Validation requirements:
+
+1. Name must not be empty.
+2. Email must have a valid format.
+3. Email must be unique.
+4. Phone number must follow the application's documented validation rules.
+5. Password must meet a reasonable minimum security requirement.
+6. Confirm password must match.
+7. Invalid submissions must display understandable errors.
+8. Valid registration must save the customer to MySQL.
+9. Passwords must be stored as secure salted password hashes.
+10. Never store plain-text passwords.
+11. Prevent users from registering themselves as administrators.
+12. Use prepared statements for database operations.
+
+After successful registration, show a confirmation message and provide the appropriate next step.
+
+Prevent duplicate registrations using both application validation and a database unique constraint.
+
+---
+
+## 7. LOGIN, LOGOUT, AND AUTHENTICATION MODULE
+
+Create a working login system.
+
+Features:
+
+* Email and password fields.
+* Login button.
+* Password visibility toggle.
+* Remember-me option only if implemented securely.
+* Logout button.
+* Session management.
+* Appropriate login error messages.
+
+Requirements:
+
+1. Authenticate customers using stored password hashes.
+2. Maintain the authenticated user through a server-side session.
+3. Regenerate the session ID after successful authentication.
+4. Implement logout by invalidating the session.
+5. Protect authenticated routes.
+6. Prevent access to another customer's order history.
+7. Prevent customers from accessing administrator pages.
+8. Redirect users to appropriate pages after login.
+9. Validate all protected actions on the server.
+10. Apply session timeout and secure cookie settings appropriate to the deployment environment.
+11. Do not expose passwords, session identifiers, or sensitive information in URLs or logs.
+
+Use secure authentication practices and meaningful error messages.
+
+---
+
+## 8. BOOK CATALOGUE MODULE
+
+Create a complete book catalogue.
+
+Each book must contain:
+
+* Book ID.
+* Title.
+* Author.
+* Category.
+* Description.
+* Publisher.
+* ISBN, when available.
+* Price.
+* Stock quantity.
+* Book-cover image path.
+* Creation and update timestamps.
+
+Display books using attractive cards or a responsive table.
+
+Each book card must show:
+
+* Cover image.
+* Title.
+* Author.
+* Price.
+* Availability.
+* View Details button.
+* Add to Cart button.
+
+Implement:
+
+1. Display all available books.
+2. Display book details.
+3. Search by title.
+4. Search by author.
+5. Filter by category.
+6. Filter by minimum and maximum price.
+7. Filter by availability.
+8. Sort by title.
+9. Sort by price, low to high.
+10. Sort by price, high to low.
+11. Sort by newest arrivals.
+12. Pagination for large catalogues.
+13. Clear Filters button.
+14. Useful messages when no books match the search.
+
+All filters, sorting controls, pagination buttons, and search forms must work.
+
+Use parameterized SQL queries and server-side validation.
+
+Do not concatenate raw user input into SQL statements.
+
+Use stable ordering for pagination.
+
+---
+
+## 9. BOOK DETAILS MODULE
+
+Create an individual details page for every book.
+
+Display:
+
+* Book cover.
+* Title.
+* Author.
+* Description.
+* Category.
+* Publisher.
+* ISBN.
+* Price.
+* Available quantity or availability status.
+* Quantity selector.
+* Add to Cart button.
+* Back to Catalogue button.
+
+Functional requirements:
+
+1. Load the correct book using its ID.
+2. Display an appropriate not-found page for invalid IDs.
+3. Prevent invalid quantities.
+4. Prevent adding more than the available stock.
+5. Add the selected quantity to the cart.
+6. Update the cart count.
+7. Display confirmation after a successful action.
+8. Allow navigation back to the catalogue.
+
+Validate stock again on the server during checkout because availability can change after the details page loads.
+
+---
+
+## 10. SHOPPING CART MODULE
+
+Create a functional shopping cart.
+
+Each cart item must display:
+
+* Book title.
+* Book image.
+* Price per unit.
+* Quantity.
+* Subtotal.
+* Remove button.
+
+Implement these actions:
+
+1. Add a book.
+2. Increase quantity.
+3. Decrease quantity.
+4. Enter a valid quantity.
+5. Remove an item.
+6. Clear the cart.
+7. Continue shopping.
+8. Proceed to checkout.
+9. Calculate the subtotal.
+10. Calculate any explicitly configured tax or delivery charge.
+11. Display the final total.
+12. Display the number of items in the cart.
+13. Display a helpful message when the cart is empty.
+
+Rules:
+
+* Never accept the total amount calculated by the browser as authoritative.
+* Calculate prices and totals on the server.
+* Check current stock before confirming an order.
+* Do not allow zero or negative quantities.
+* Do not allow unavailable books to be ordered.
+* Do not allow checkout with an empty cart.
+
+For a simple academic implementation, use a server-side session to store the cart and MySQL to persist confirmed orders.
+
+If the cart is stored in a session, clearly handle login and logout behavior.
+
+All cart controls must work.
+
+---
+
+## 11. CHECKOUT AND ORDER PLACEMENT MODULE
+
+Create a checkout page.
+
+Display:
+
+* Customer details.
+* Delivery address.
+* Selected books.
+* Quantities.
+* Price per item.
+* Subtotals.
+* Applicable tax, if configured.
+* Delivery charges, if configured.
+* Grand total.
+* Place Order button.
+* Return to Cart button.
+
+Functional requirements:
+
+1. Require customer authentication.
+2. Require a valid delivery address.
+3. Recalculate the order total on the server.
+4. Validate every selected book and quantity.
+5. Check current stock for every item.
+6. Create an order record.
+7. Create corresponding order-item records.
+8. Save the price of each book at the time of purchase.
+9. Decrease inventory quantities.
+10. Use a database transaction for order creation and stock updates.
+11. Roll back the transaction if any step fails.
+12. Prevent duplicate orders from repeated submissions.
+13. Clear the cart only after a successful order.
+14. Display an order confirmation page.
+15. Generate a unique order reference.
+16. Show the order date and total.
+17. Provide a link to the customer's order history.
+
+Use suitable transaction isolation or row locking where necessary to prevent concurrent orders from overselling stock.
+
+Do not integrate a real payment gateway unless its configuration and credentials are explicitly supplied.
+
+For the academic version, implement a clearly labelled payment method such as Cash on Delivery or a simulated payment option.
+
+A simulated payment must be identified as a simulation, not as a real payment.
+
+---
+
+## 12. CUSTOMER ORDER HISTORY MODULE
+
+Create an order-history page for authenticated customers.
+
+Display:
+
+* Order reference.
+* Order date.
+* Total amount.
+* Order status.
+* View Details button.
+
+Order statuses may include:
+
+* PLACED.
+* CONFIRMED.
+* SHIPPED.
+* DELIVERED.
+* CANCELLED.
+
+Implement:
+
+1. Display only the logged-in customer's orders.
+2. Sort orders by date.
+3. Open an order-details page.
+4. Display all books in the order.
+5. Display the quantities and purchase-time prices.
+6. Display the order total and current status.
+7. Show a useful message when there are no orders.
+
+A customer must never be able to access another customer's order by changing an order ID in the URL.
+
+---
+
+## 13. CUSTOMER PROFILE MODULE
+
+Create a customer profile page.
+
+Display:
+
+* Name.
+* Email.
+* Phone number.
+* Delivery address.
+
+Implement:
+
+1. View profile.
+2. Edit permitted profile fields.
+3. Validate updated information.
+4. Save updates to MySQL.
+5. Change password using current-password verification.
+6. Display success or error messages.
+
+Do not allow customers to change their role or administrator permissions.
+
+---
+
+## 14. ADMINISTRATOR DASHBOARD MODULE
+
+Create a separate administrator dashboard.
+
+Display summary cards for:
+
+* Total books.
+* Total customers.
+* Total orders.
+* Pending orders.
+* Low-stock books.
+* Total sales from the explicitly defined set of eligible orders.
+
+The dashboard must load real information from MySQL.
+
+Do not hardcode statistics.
+
+Create working navigation links for:
+
+* Manage Books.
+* Manage Categories.
+* Manage Orders.
+* Manage Customers.
+* Inventory.
+* Reports.
+* Logout.
+
+Use server-side authorization to ensure that only administrators can access administrative functionality.
+
+Hiding an administrator link from customers is not sufficient security.
+
+---
+
+## 15. ADMINISTRATOR BOOK MANAGEMENT MODULE
+
+Create a working book-management interface.
+
+Display a table containing:
+
+* Book ID.
+* Cover image.
+* Title.
+* Author.
+* Category.
+* Price.
+* Stock.
+* Actions.
+
+Implement these buttons:
+
+1. Add Book.
+2. View Book.
+3. Edit Book.
+4. Delete Book.
+5. Search.
+6. Filter.
+7. Sort.
+8. Pagination.
+9. Refresh.
+10. Return to Dashboard.
+
+Add Book form fields:
+
+* Title.
+* Author.
+* Category.
+* Description.
+* Publisher.
+* ISBN.
+* Price.
+* Stock.
+* Cover image path or supported image upload.
+
+Validation:
+
+* Required fields must be completed.
+* Price must be valid and nonnegative.
+* Stock must be a valid nonnegative integer.
+* ISBN uniqueness must be enforced when an ISBN is supplied.
+* Category references must be valid.
+* Uploaded images must be validated for type and size if upload functionality is implemented.
+* File paths must be handled safely.
+
+Editing a book must update the database.
+
+Deleting a book must require confirmation.
+
+Use appropriate database constraints and safe deletion rules. Do not delete historical order information when a book is removed from the active catalogue.
+
+For books referenced by past orders, prefer deactivation or soft deletion rather than destroying historical records.
+
+All CRUD operations must be implemented and tested.
+
+CRUD means Create, Read, Update, and Delete.
+
+---
+
+## 16. CATEGORY MANAGEMENT MODULE
+
+Create an administrator interface for managing book categories.
+
+Features:
+
+* Add category.
+* View categories.
+* Edit category.
+* Delete category when permitted.
+* Search categories.
+* Validate category names.
+* Prevent duplicate category names.
+* Display the number of books in each category where useful.
+
+Prevent deleting a category if it is still referenced by active books, unless the application safely reassigns or handles those books.
+
+Update category dropdowns throughout the application.
+
+Every button and form must work.
+
+---
+
+## 17. INVENTORY MANAGEMENT MODULE
+
+Create an inventory-management page.
+
+Display:
+
+* Book ID.
+* Title.
+* Current stock.
+* Stock status.
+* Last updated timestamp.
+
+Implement:
+
+1. Update stock.
+2. Search inventory.
+3. Filter low-stock books.
+4. Filter out-of-stock books.
+5. Display stock changes.
+6. Warn the administrator about low stock.
+7. Reject invalid stock quantities.
+8. Prevent accidental negative stock.
+9. Maintain stock consistency during order processing.
+
+Create a configurable low-stock threshold.
+
+For example, when the threshold is 5, a book with 4 available copies should appear in the low-stock list.
+
+If feasible, maintain an inventory movement history recording:
+
+* Book.
+* Quantity change.
+* Reason.
+* Date.
+* Administrator responsible.
+
+Inventory updates and order processing must not permit stock to become negative.
+
+---
+
+## 18. ORDER MANAGEMENT MODULE FOR ADMINISTRATORS
+
+Create an administrator order-management interface.
+
+Display:
+
+* Order reference.
+* Customer.
+* Order date.
+* Total amount.
+* Payment method or payment status, when applicable.
+* Order status.
+* View Details button.
+
+Implement:
+
+1. View all orders.
+2. Search orders.
+3. Filter by status.
+4. Filter by date range.
+5. View order details.
+6. Update permitted order statuses.
+7. View associated order items.
+8. Cancel orders according to defined business rules.
+9. Restore stock when a cancellation policy requires it.
+10. Refresh the order list.
+
+Validate every status transition on the server.
+
+For example, do not permit an arbitrary transition from DELIVERED to SHIPPED.
+
+Prevent repeated cancellation from restoring stock more than once.
+
+Record important status changes.
+
+Use database transactions when changing an order status and adjusting inventory.
+
+---
+
+## 19. CUSTOMER MANAGEMENT MODULE FOR ADMINISTRATORS
+
+Create an administrator page displaying customer information.
+
+Show only information required for administration, such as:
+
+* Customer ID.
+* Name.
+* Email.
+* Phone.
+* Registration date.
+* Account status.
+
+Implement:
+
+* Search customers.
+* View permitted customer details.
+* Filter customer records.
+* Activate or deactivate accounts if supported.
+* Paginate customer lists.
+
+Never display password hashes or authentication secrets.
+
+Protect personal information from unauthorized access.
+
+Do not expose customer details to other customers.
+
+---
+
+## 20. REPORTS MODULE
+
+Create reports using actual database information.
+
+Include:
+
+1. Total books in the catalogue.
+2. Total available stock.
+3. Low-stock report.
+4. Out-of-stock report.
+5. Total orders.
+6. Orders grouped by status.
+7. Sales totals for a selected period.
+8. Best-selling books based on order-item records.
+9. Recent orders.
+
+Provide date filters where appropriate.
+
+Define sales calculations consistently. Exclude cancelled orders and simulated payments that have not reached the defined eligible state.
+
+Do not hardcode report results.
+
+If export functionality is included, generate a real CSV file from database results.
+
+All report filters and export buttons must work.
+
+---
+
+## 21. DATABASE DESIGN
+
+Create a normalized MySQL schema.
+
+At minimum, implement the following tables:
+
+1. customers
+2. admins, or a secure unified users table with roles
+3. categories
+4. books
+5. orders
+6. order_items
+7. inventory_movements, if inventory history is implemented
+
+Choose a consistent authentication model and document it.
+
+Use:
+
+* Primary keys.
+* Foreign keys.
+* Unique constraints.
+* NOT NULL constraints.
+* Appropriate indexes.
+* Suitable numeric types.
+* Timestamps.
+* CHECK constraints where supported and appropriate.
+
+Recommended relationships:
+
+* A category can contain many books.
+* A customer can place many orders.
+* An order can contain many order items.
+* Each order item references a book.
+* A book can appear in many order items.
+
+Preserve purchase-time book prices in order_items.
+
+Use DECIMAL for monetary values rather than FLOAT or DOUBLE.
+
+Create these database scripts:
+
+database/schema.sql
+database/sample-data.sql
+database/README.md
+
+Include realistic sample data for books and categories.
+
+Do not put database passwords into SQL scripts or source code.
+
+---
+
+## 22. JAVA AND OBJECT-ORIENTED PROGRAMMING REQUIREMENTS
+
+Demonstrate the following Java concepts in appropriate parts of the project.
+
+1. Classes and objects.
+2. Encapsulation.
+3. Constructors.
+4. Inheritance where it represents a meaningful relationship.
+5. Method overloading where appropriate.
+6. Method overriding where appropriate.
+7. Interfaces.
+8. Abstract classes where justified.
+9. Collections Framework.
+10. Generics.
+11. Exception handling.
+12. Custom exceptions where useful.
+13. File handling for supported import/export operations.
+14. Java streams for appropriate in-memory data processing.
+15. JDBC.
+16. PreparedStatement.
+17. ResultSet.
+18. Database transactions.
+19. Modular programming.
+20. Separation of concerns.
+
+Do not introduce inheritance, abstract classes, interfaces, or multithreading artificially just to claim that a concept is present.
+
+Use them where they solve a real design problem.
+
+For example:
+
+* Book, Customer, and Order represent domain entities.
+* DAO interfaces can define data-access contracts.
+* Service classes can implement business rules.
+* Collections can represent cart items or search results.
+* Custom exceptions can represent invalid order operations.
+* Java streams can filter or summarize in-memory collections when appropriate.
+* JDBC can retrieve and update persistent data.
+
+Create meaningful examples that can be explained during a university viva.
+
+---
+
+## 23. SEARCHING, SORTING, AND COLLECTIONS
+
+Demonstrate appropriate searching and sorting functionality.
+
+Implement database-backed searching for large catalogues.
+
+Use Java collections for in-memory operations where appropriate.
+
+Examples:
+
+* ArrayList for search results.
+* Map for grouping or looking up items.
+* Set for tracking unique values.
+* Comparator for sorting books by price or title.
+* Streams for suitable collection transformations.
+
+Use database pagination for large result sets rather than loading the entire catalogue into memory.
+
+Avoid adding complex data structures when simpler solutions are more appropriate.
+
+---
+
+## 24. SECURITY REQUIREMENTS
+
+Implement security throughout the application.
+
+Required protections:
+
+1. Prepared SQL statements.
+2. Secure password hashing.
+3. Server-side validation.
+4. Session-based authentication.
+5. Role-based authorization.
+6. CSRF protection for state-changing requests.
+7. Contextual output escaping to reduce XSS risks.
+8. Safe error handling.
+9. Secure file-upload validation if uploads are supported.
+10. Protection against unauthorized access to other customers' records.
+11. Session invalidation on logout.
+12. Safe handling of database credentials.
+13. Appropriate HTTP methods for state-changing operations.
+14. No state changes through ordinary GET requests.
+15. Validation of order quantities and prices on the server.
+
+Never rely exclusively on JavaScript validation.
+
+Never trust a customer-supplied price, role, order total, or stock value.
+
+Use environment variables or an appropriate local configuration mechanism for secrets.
+
+Provide a sample configuration file without real credentials.
+
+---
+
+## 25. ERROR HANDLING AND USER FEEDBACK
+
+Every module must provide clear feedback.
+
+Examples:
+
+* Registration successful.
+* Invalid email format.
+* Email already registered.
+* Login failed.
+* Book added successfully.
+* Book updated successfully.
+* Book not found.
+* Insufficient stock.
+* Cart is empty.
+* Order placed successfully.
+* Database connection failed.
+* Unauthorized access.
+* Invalid form input.
+
+Use appropriate HTTP status codes.
+
+Create consistent error pages for:
+
+* 400 Bad Request.
+* 401 Unauthorized, where appropriate.
+* 403 Forbidden.
+* 404 Not Found.
+* 500 Internal Server Error.
+
+Never display stack traces, database credentials, SQL internals, or sensitive details to end users.
+
+Log diagnostic details safely on the server.
+
+---
+
+## 26. TESTING REQUIREMENTS
+
+Create tests for important application behavior.
+
+Unit tests should cover:
+
+* Price and subtotal calculations.
+* Quantity validation.
+* Order-total calculations.
+* Book validation.
+* Stock validation.
+* Order status transitions.
+* Password-validation rules.
+* Other business rules.
+
+Integration tests should cover:
+
+* Database connectivity.
+* Book CRUD operations.
+* Customer registration.
+* Login verification.
+* Search and filtering.
+* Order creation.
+* Inventory updates.
+* Order cancellation and stock restoration.
+* Database transaction rollback.
+
+Create a manual test checklist for:
+
+* Customer workflows.
+* Administrator workflows.
+* Invalid inputs.
+* Unauthorized access.
+* Empty results.
+* Concurrent stock updates where feasible.
+
+Do not claim that tests pass unless they have actually been executed.
+
+Document any tests that could not be run.
+
+---
+
+## 27. USER EXPERIENCE REQUIREMENTS
+
+Every interactive element must be functional.
+
+For every button, specify:
+
+1. Its purpose.
+2. Its route or event.
+3. Its input requirements.
+4. Its backend operation, if any.
+5. Its success behavior.
+6. Its error behavior.
+
+Required interactions include:
+
+* Navigation links.
+* Search.
+* Filters.
+* Sorting.
+* Pagination.
+* Login.
+* Registration.
+* Logout.
+* Add to Cart.
+* Increase Quantity.
+* Decrease Quantity.
+* Remove Item.
+* Clear Cart.
+* Checkout.
+* Place Order.
+* View Order.
+* Edit Profile.
+* Change Password.
+* Add Book.
+* Edit Book.
+* Delete or deactivate Book.
+* Add Category.
+* Edit Category.
+* Delete Category.
+* Update Stock.
+* Update Order Status.
+* Generate Reports.
+* Export CSV.
+* Confirmation dialogs.
+* Back buttons and breadcrumbs.
+
+Do not use placeholder links such as href="#" for unfinished features.
+
+Do not display buttons for features that have not been implemented.
+
+If a feature is outside the project's scope, omit the button or clearly mark the feature as unavailable.
+
+---
+
+## 28. PROJECT DOCUMENTATION
+
+Generate the following documentation:
+
+1. README.md
+2. Project overview.
+3. Problem statement.
+4. Objectives.
+5. Scope.
+6. Functional requirements.
+7. Non-functional requirements.
+8. System architecture.
+9. Use-case descriptions.
+10. Database schema.
+11. ER diagram.
+12. Module descriptions.
+13. Algorithms.
+14. Flowcharts for important operations.
+15. Test cases.
+16. Installation instructions.
+17. Configuration instructions.
+18. Deployment instructions.
+19. Known limitations.
+20. Viva questions and answers.
+
+Explain the important Java and database concepts in simple language appropriate for a beginner.
+
+Include instructions for running the project in IntelliJ IDEA on Windows.
+
+---
+
+## 29. SETUP AND EXECUTION
+
+Provide a complete local development setup.
+
+The instructions must explain:
+
+1. Required Java version.
+2. How to install or configure Maven.
+3. How to install MySQL.
+4. How to create the database.
+5. How to execute schema.sql.
+6. How to load sample data.
+7. How to configure database connection settings.
+8. How to configure the MySQL JDBC driver.
+9. How to configure Apache Tomcat.
+10. How to build the application.
+11. How to deploy the WAR file.
+12. How to open the application in a browser.
+13. How to run tests.
+14. How to diagnose common errors.
+
+Include the appropriate Maven commands.
+
+Ensure that all referenced files and configuration keys actually exist in the generated project.
+
+Provide a sample environment configuration without real passwords.
+
+If a demonstration administrator account is needed, provide a secure local-only setup procedure that creates its password hash. Do not embed a production administrator password in the source code.
+
+---
+
+## 30. DEVELOPMENT WORKFLOW
+
+Follow this development sequence:
+
+PHASE 1:
+Analyze requirements and produce the architecture, module list, database design, and development plan.
+
+PHASE 2:
+Create the Maven project and database schema.
+
+PHASE 3:
+Implement database connectivity, models, DAO classes, and services.
+
+PHASE 4:
+Implement customer registration, login, logout, and authorization.
+
+PHASE 5:
+Implement the catalogue, search, sorting, filtering, and book details.
+
+PHASE 6:
+Implement shopping cart, checkout, order placement, and inventory updates.
+
+PHASE 7:
+Implement administrator dashboard, book management, categories, customers, and orders.
+
+PHASE 8:
+Implement reports and CSV export.
+
+PHASE 9:
+Implement responsive JSP pages, CSS, and JavaScript.
+
+PHASE 10:
+Run tests, fix errors, verify routes and buttons, and check security.
+
+PHASE 11:
+Prepare documentation and demonstration instructions.
+
+At each phase:
+
+* Create actual source files.
+* Explain the purpose of the important files.
+* Compile the application.
+* Run relevant tests.
+* Fix errors before continuing.
+* Keep the project structure consistent.
+* Do not replace working code with incomplete placeholders.
+* Maintain a list of completed and remaining requirements.
+
+If the coding environment supports direct file editing and terminal commands, use those capabilities to create, compile, and test the application.
+
+If the environment cannot run MySQL or Tomcat, state which parts remain unverified and provide instructions for testing them locally.
+
+---
+
+## 31. FINAL ACCEPTANCE CRITERIA
+
+Consider the project complete only when the following conditions have been addressed and tested:
+
+[ ] The application builds successfully.
+
+[ ] The database schema can be created from the supplied SQL files.
+
+[ ] Sample book data can be loaded.
+
+[ ] The homepage displays books from the database.
+
+[ ] Search works correctly.
+
+[ ] Filters and sorting work correctly.
+
+[ ] Customer registration works.
+
+[ ] Duplicate email registration is rejected.
+
+[ ] Login and logout work.
+
+[ ] Passwords are not stored in plain text.
+
+[ ] Customers cannot access administrator functions.
+
+[ ] Customers cannot access other customers' orders.
+
+[ ] Administrators can add books.
+
+[ ] Administrators can edit books.
+
+[ ] Administrators can deactivate or safely remove books.
+
+[ ] Administrators can manage categories.
+
+[ ] The shopping cart works.
+
+[ ] Cart totals are calculated on the server.
+
+[ ] Checkout validates current stock.
+
+[ ] Orders are stored in MySQL.
+
+[ ] Order items are stored correctly.
+
+[ ] Stock updates are transaction-safe.
+
+[ ] Failed orders do not leave partial database changes.
+
+[ ] Order history displays the correct customer's orders.
+
+[ ] Order status updates follow business rules.
+
+[ ] Inventory reports work.
+
+[ ] Sales reports use actual database records.
+
+[ ] Every displayed button has an implemented action.
+
+[ ] Forms display meaningful validation errors.
+
+[ ] The interface works on mobile and desktop.
+
+[ ] Automated tests have been run and their results documented.
+
+[ ] Setup instructions work for the generated project.
+
+[ ] The final project report and viva documentation are included.
+
+---
+
+## 32. FINAL INSTRUCTIONS
+
+Begin by generating the system architecture, complete database schema, Maven project structure, and implementation plan.
+
+Then implement the application in small, verifiable phases.
+
+Do not stop after generating a homepage.
+
+Do not provide only pseudocode when actual implementation is requested.
+
+Do not omit backend code, database scripts, configuration, or required JSP and Servlet files.
+
+Do not mark a module complete merely because its UI exists.
+
+For every module, verify the complete flow:
+
+User action → HTTP request → Servlet/controller → service → DAO → MySQL → response → updated UI.
+
+Ensure that the result is a coherent Java web application that can be built, configured, tested, and demonstrated locally.
+
+When finished, provide:
+
+1. The complete project file structure.
+2. All source files.
+3. Database scripts.
+4. Setup instructions.
+5. Test results.
+6. A list of functional buttons and their actions.
+7. Any remaining limitations.
+8. A demonstration guide for the university project review.
